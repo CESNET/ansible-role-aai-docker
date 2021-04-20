@@ -1,0 +1,85 @@
+---
+
+- name: "DOCKER - prereqs"
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gpg
+      - software-properties-common
+    state: present
+
+- name: "add Docker repository key"
+  apt_key:
+    id: 0EBFCD88
+    keyring: /etc/apt/trusted.gpg.d/docker.gpg
+    url: "https://download.docker.com/linux/debian/gpg"
+    state: present
+
+- name: "add Docker repository"
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+    filename: 'docker'
+    state: present
+  register: dockerrepo
+
+- name: "update from new repo"
+  when: dockerrepo.changed
+  apt:
+    update_cache: yes
+
+- set_fact:
+    docker_packages:
+      - docker-ce
+      - docker-ce-cli
+      - docker-ce-rootless-extras
+      - python3-pip
+
+- name: "install docker packages"
+  apt:
+    state: present
+    name: "{{ item }}"
+  loop: "{{ docker_packages }}"
+
+- name: "install Docker packages"
+  apt:
+    name:
+      - containerd.io
+      - python3-docker
+      - pass
+    state: present
+
+- name: "DOCKER - Install docker-compose"
+  pip:
+    name: docker-compose
+
+- name: "DOCKER - Log into docker registry"
+  docker_login:
+    registry: "{{ docker_repository_url }}"
+    username: "{{ docker_repository_username }}"
+    password: "{{ docker_repository_password }}"
+
+- name: "DOCKER - Configure docker network"
+  docker_network:
+    name: "{{ docker_network_name }}"
+    ipam_config:
+      - subnet: 192.168.1.0/24
+        gateway: 192.168.1.1
+    driver: bridge
+    driver_options:
+      com.docker.network.driver.mtu: "{{ ansible_default_ipv4.mtu }}"
+    internal: no
+
+- name: "Create a volume"
+  docker_volume:
+    name: "{{ item }}"
+  loop: "{{ docker_volumes }}"
+
+- name: "DOCKER - Add job to crontab to prune unused docker images"
+  cron:
+    name: "Prune unused docker images"
+    hour: "1"
+    minute: "0"
+    user: "root"
+    job: "/usr/bin/docker system prune -f -a --filter \"until=48h\" >> /var/log/docker_cron.log 2>&1"

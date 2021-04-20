@@ -1,0 +1,6 @@
+---
+# tasks file for ansible-role-aai-docker-environment
+
+- import_tasks: docker-environment.yml
+  tags:
+    - docker-environment.yml

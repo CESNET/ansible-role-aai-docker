@@ -1,0 +1,17 @@
+---
+# defaults file for cesnet.docker
+
+#Docker repository url
+docker_repository_url: "https://hub.docker.com"
+
+#Username for connecting to docker repository
+#docker_repository_username: "docker"
+
+#Password for the user
+#docker_repository_password: "password"
+
+#Name of the docker network, that will be created
+docker_network_name: "network"
+
+#List of docker volumes that will be created
+docker_volumes: []
