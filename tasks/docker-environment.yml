@@ -56,9 +56,10 @@
 
 - name: "DOCKER - Log into docker registry"
   docker_login:
-    registry: "{{ docker_repository_url }}"
-    username: "{{ docker_repository_username }}"
-    password: "{{ docker_repository_password }}"
+    registry: "{{ item.url }}"
+    username: "{{ item.username }}"
+    password: "{{ item.password }}"
+  loop: "{{ docker_repositories }}"
 
 - name: "DOCKER - Configure docker network"
   docker_network:

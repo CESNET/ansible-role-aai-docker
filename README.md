@@ -13,9 +13,7 @@ Requirements
 Role Variables
 --------------
 
-* docker_repository_url - Docker registry URL
-* docker_repository_username - Username for connecting to the registry
-* docker_repository_password - Password
+* docker_repositories - Definition of docker repositories to login
 * docker_network_name - Name of the created docker network
   * The docker network is created in bridge mode
 * docker_volumes - List of docker volumes that will be created
@@ -29,15 +27,14 @@ Example Playbook
 ----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
+```yaml
     - hosts: servers
       vars:
-        docker_repository_url: "https://hub.docker.com"
-        docker_repository_username: "docker"
-        docker_repository_password: "password"
+        docker_repositories:
+          - { url: "Repository URL", username: "username", password: "password" }
         docker_network_name: "network"
         docker_volumes: []
       roles:
          - { role: ansible-role-aai-docker-environment }
-
+```
 
