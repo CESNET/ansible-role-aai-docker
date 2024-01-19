@@ -60,6 +60,7 @@
     name:
       - docker<7
       - docker-compose
+      - websocket
 
 - name: "DOCKER - Log into docker registry"
   docker_login:
