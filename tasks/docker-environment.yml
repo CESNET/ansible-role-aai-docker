@@ -46,13 +46,21 @@
   apt:
     name:
       - containerd.io
-      - python3-docker
       - pass
     state: present
 
-- name: "DOCKER - Install docker-compose"
+- name: "uninstall python3-docker from apt"
+  apt:
+    name:
+      - python3-docker
+    state: absent
+
+- name: "DOCKER - Install pip packages docker and docker-compose"
   pip:
-    name: docker-compose
+    name:
+      - docker<7
+      - docker-compose
+      - websocket
 
 - name: "DOCKER - Log into docker registry"
   docker_login:
