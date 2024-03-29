@@ -8,7 +8,16 @@
       - curl
       - gpg
       - software-properties-common
+      - python3-pip
     state: present
+
+- name: "DOCKER - remove docker-compose v1 and docker from pip"
+  pip:
+    name:
+      - docker
+      - docker-compose
+      - websocket
+    state: absent
 
 - name: "add Docker repository key"
   apt_key:
@@ -34,37 +43,15 @@
       - docker-ce
       - docker-ce-cli
       - docker-ce-rootless-extras
-      - python3-pip
+      - containerd.io
+      - pass
+      - python3-docker
 
 - name: "install docker packages"
   apt:
     state: present
     name: "{{ item }}"
   loop: "{{ docker_packages }}"
-
-- name: "install Docker packages"
-  apt:
-    name:
-      - containerd.io
-      - pass
-    state: present
-
-- name: "uninstall python3-docker from apt"
-  apt:
-    name:
-      - python3-docker
-    state: absent
-
-- name: "DOCKER - remove docker-compose v1"
-  pip:
-    name: docker-compose
-    state: absent
-
-- name: "DOCKER - Install pip package docker"
-  pip:
-    name:
-      - docker<7
-      - websocket
 
 - name: "DOCKER - Log into docker registry"
   docker_login:
