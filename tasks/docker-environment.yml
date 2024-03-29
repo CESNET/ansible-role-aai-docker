@@ -55,11 +55,15 @@
       - python3-docker
     state: absent
 
-- name: "DOCKER - Install pip packages docker and docker-compose"
+- name: "DOCKER - remove docker-compose v1"
+  pip:
+    name: docker-compose
+    state: absent
+
+- name: "DOCKER - Install pip package docker"
   pip:
     name:
       - docker<7
-      - docker-compose
       - websocket
 
 - name: "DOCKER - Log into docker registry"
